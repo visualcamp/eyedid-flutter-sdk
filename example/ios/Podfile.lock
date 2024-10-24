@@ -1,0 +1,41 @@
+PODS:
+  - Eyedid (1.0.0-beta1)
+  - eyedid_flutter (0.0.1):
+    - Eyedid (~> 1.0.0-beta1)
+    - Flutter
+  - Flutter (1.0.0)
+  - integration_test (0.0.1):
+    - Flutter
+  - permission_handler_apple (9.3.0):
+    - Flutter
+
+DEPENDENCIES:
+  - eyedid_flutter (from `.symlinks/plugins/eyedid_flutter/ios`)
+  - Flutter (from `Flutter`)
+  - integration_test (from `.symlinks/plugins/integration_test/ios`)
+  - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
+
+SPEC REPOS:
+  trunk:
+    - Eyedid
+
+EXTERNAL SOURCES:
+  eyedid_flutter:
+    :path: ".symlinks/plugins/eyedid_flutter/ios"
+  Flutter:
+    :path: Flutter
+  integration_test:
+    :path: ".symlinks/plugins/integration_test/ios"
+  permission_handler_apple:
+    :path: ".symlinks/plugins/permission_handler_apple/ios"
+
+SPEC CHECKSUMS:
+  Eyedid: 0203772cf9bc0cfa840867e2193f26226fd40a34
+  eyedid_flutter: b5e90659fff00a76c78edb2834eb713e82beb2d7
+  Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
+  integration_test: 252f60fa39af5e17c3aa9899d35d908a0721b573
+  permission_handler_apple: 9878588469a2b0d0fc1e048d9f43605f92e6cec2
+
+PODFILE CHECKSUM: 4d4b39f8206c5aa0c86c10ce5770bc74741f3c00
+
+COCOAPODS: 1.15.2
