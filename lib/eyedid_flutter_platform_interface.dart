@@ -81,8 +81,11 @@ abstract class EyedidFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('setTrackingFPS() has not been implemented.');
   }
 
-  Future<void> startCalibration(CalibrationMode calibrationMode,
-      CalibrationCriteria calibrationCriteria, Rect? region) {
+  Future<void> startCalibration(
+      CalibrationMode calibrationMode,
+      CalibrationCriteria calibrationCriteria,
+      Rect? region,
+      bool usePreviousCalibration) {
     throw UnimplementedError('startCalibration() has not been implemented.');
   }
 
@@ -118,6 +121,10 @@ abstract class EyedidFlutterPlatform extends PlatformInterface {
   Stream<dynamic> getTrackingEventStream() {
     throw UnimplementedError(
         'getTrackingEventStream() has not been implemented.');
+  }
+
+  Stream<dynamic> getDropEventStream() {
+    throw UnimplementedError('getDropEventStream() has not been implemented.');
   }
 
   Stream<dynamic> getStatusEventStream() {

@@ -1,4 +1,5 @@
 import 'package:eyedid_flutter/constants/eyedid_flutter_calibration_option.dart';
+import 'package:eyedid_flutter/events/eyedid_flutter_drop.dart';
 import 'package:eyedid_flutter/eyedid_flutter_initialized_result.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
@@ -34,6 +35,7 @@ class _MyAppState extends State<MyApp> {
   var _isCaliMode = false;
 
   StreamSubscription<dynamic>? _trackingEventSubscription;
+  StreamSubscription<dynamic>? _dropEventSubscription;
   StreamSubscription<dynamic>? _statusEventSubscription;
   StreamSubscription<dynamic>? _calibrationEventSubscription;
 
@@ -128,6 +130,7 @@ class _MyAppState extends State<MyApp> {
 
   void listenEvents() {
     _trackingEventSubscription?.cancel();
+    _dropEventSubscription?.cancel();
     _statusEventSubscription?.cancel();
     _calibrationEventSubscription?.cancel();
     _trackingEventSubscription =
@@ -145,6 +148,13 @@ class _MyAppState extends State<MyApp> {
         });
       }
     });
+
+    _dropEventSubscription =
+        _eyedidFlutterPlugin.getDropEvent().listen((event) {
+      final info = DropInfo(event);
+      debugPrint("Dropped at timestamp: ${info.timestamp}");
+    });
+
     _statusEventSubscription =
         _eyedidFlutterPlugin.getStatusEvent().listen((event) {
       final info = StatusInfo(event);
@@ -178,6 +188,11 @@ class _MyAppState extends State<MyApp> {
           _calibrationProgress = info.progress!;
         });
       } else if (info.type == CalibrationType.finished) {
+        setState(() {
+          _isCaliMode = false;
+        });
+      } else if (info.type == CalibrationType.canceled) {
+        debugPrint("Calibration canceled ${info.data?.length}");
         setState(() {
           _isCaliMode = false;
         });
@@ -217,7 +232,8 @@ class _MyAppState extends State<MyApp> {
   void _calibrationBtnPressed() {
     if (_isInitialied) {
       try {
-        _eyedidFlutterPlugin.startCalibration(CalibrationMode.five);
+        _eyedidFlutterPlugin.startCalibration(CalibrationMode.five,
+            usePreviousCalibration: true);
         setState(() {
           _isCaliMode = true;
         });

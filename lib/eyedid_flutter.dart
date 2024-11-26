@@ -185,13 +185,16 @@ class EyedidFlutter {
   /// - [calibrationMode]: The mode to use (1, 5 targets).
   /// - [calibrationCriteria]: The criteria for calibration (default is [CalibrationCriteria.standard]).
   /// - [region]: The screen region where targets will appear (default is the full screen).
+  /// - [usePreviousCalibration]: Whether to use the previous calibration data (default is false).
+
   ///
   /// Note: A [PlatformException] may be thrown if the gaze tracker is not initialized.
   Future<void> startCalibration(CalibrationMode calibrationMode,
       {CalibrationCriteria calibrationCriteria = CalibrationCriteria.standard,
-      Rect? region}) async {
-    EyedidFlutterPlatform.instance
-        .startCalibration(calibrationMode, calibrationCriteria, region);
+      Rect? region,
+      bool usePreviousCalibration = false}) async {
+    EyedidFlutterPlatform.instance.startCalibration(
+        calibrationMode, calibrationCriteria, region, usePreviousCalibration);
   }
 
   /// Stops the current calibration process in the Eyedid SDK.
@@ -302,6 +305,11 @@ class EyedidFlutter {
   /// Subscribe to the stream to process tracking data.
   Stream<dynamic> getTrackingEvent() {
     return EyedidFlutterPlatform.instance.getTrackingEventStream();
+  }
+
+  /// Returns a stream of events triggered when an input image frame is dropped due to performance constraints.
+  Stream<dynamic> getDropEvent() {
+    return EyedidFlutterPlatform.instance.getDropEventStream();
   }
 
   /// Returns a stream of calibration events from the Eyedid SDK.

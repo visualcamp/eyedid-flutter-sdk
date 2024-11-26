@@ -19,6 +19,7 @@ enum EyedidArgumentKey {
   calibrationRegionTop,
   calibrationRegionRight,
   calibrationRegionBottom,
+  usePreviousCalibration,
   calibrationData,
   attentionRegionLeft,
   attentionRegionTop,

@@ -21,6 +21,7 @@ struct ArgumentKey {
     static let calibrationRegionTop = "calibrationRegionTop"
     static let calibrationRegionRight = "calibrationRegionRight"
     static let calibrationRegionBottom = "calibrationRegionBottom"
+    static let usePreviousCalibration = "usePreviousCalibration"
     static let calibrationData = "calibrationData"
     static let attentionRegionLeft = "attentionRegionLeft"
     static let attentionRegionTop = "attentionRegionTop"

@@ -4,7 +4,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'eyedid_flutter'
-  s.version          = '0.0.1'
+  s.version          = '0.0.2'
   s.summary          = 'Eyedid Flutter plugin project.'
   s.description      = <<-DESC
 Eyedid SDK
@@ -16,8 +16,8 @@ Eyedid SDK
   s.source_files = 'Classes/**/*'
   s.documentation_url = 'https://docs.eyedid.ai'
   s.dependency 'Flutter'
-  s.dependency 'Eyedid', '~> 1.0.0-beta1'
-  s.platform = :ios, '12.0'
+  s.dependency 'Eyedid', '~> 1.0.0-beta2'
+  s.platform = :ios, '13.0'
 
   # Flutter.framework does not contain a i386 slice.
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386' }

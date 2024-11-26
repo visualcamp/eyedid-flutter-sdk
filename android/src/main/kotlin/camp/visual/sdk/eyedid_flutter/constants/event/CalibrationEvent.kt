@@ -12,5 +12,6 @@ object CalibrationEvent {
         const val CALIBRATION_PROGRESS = "onCalibrationProgress"
         const val CALIBRATION_NEXT_XY = "onCalibrationNextXY"
         const val CALIBRATION_FINISHED = "onCalibrationFinished"
+        const val CALIBRATION_CANCELED = "onCalibrationCanceled"
     }
 }

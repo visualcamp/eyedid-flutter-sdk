@@ -25,6 +25,7 @@ import camp.visual.sdk.eyedid_flutter.constants.ErrorMessage
 import camp.visual.sdk.eyedid_flutter.constants.MethodName
 import camp.visual.sdk.eyedid_flutter.constants.ResultKey
 import camp.visual.sdk.eyedid_flutter.constants.event.CalibrationEvent
+import camp.visual.sdk.eyedid_flutter.constants.event.DropEvent
 import camp.visual.sdk.eyedid_flutter.constants.event.StatusEvent
 import camp.visual.sdk.eyedid_flutter.constants.event.TrackingEvent
 import io.flutter.embedding.engine.plugins.FlutterPlugin
@@ -44,12 +45,15 @@ class EyedidFlutterPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Ini
     StatusCallback, TrackingCallback, CalibrationCallback {
     private lateinit var channel: MethodChannel
     private var trackingEventSink: EventSink? = null
+    private var dropEventSink: EventSink? = null
     private var statusEventSink: EventSink? = null
     private var calibrationEventSink: EventSink? = null
 
     private val eyedidError = "Eyedid SDK error"
 
     private val trackingEventConnected = Any()
+    private val dropEventConnected = Any()
+
     private val statusEventConnected = Any()
     private val calibrationEventConnected = Any()
     private val methodConnected = Any()
@@ -257,6 +261,13 @@ class EyedidFlutterPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Ini
             throwException(result, ErrorMessage.EYEDID_NOT_INITIALIZED_ERROR_MESSAGE)
         } else {
             var calibrationMode = CalibrationModeType.FIVE_POINT
+            var usePrevCalibration = false;
+
+            val usePrevCalibrationResult = call.argument<Boolean>(ArgumentKey.USE_PREVIOUS_CALIBRATION)
+            if (usePrevCalibrationResult != null) {
+                usePrevCalibration = usePrevCalibrationResult
+            }
+
             val modeInt = call.argument<Int>(ArgumentKey.CALIBRATION_MODE)
             if (modeInt != null && modeInt == 1) {
                 calibrationMode = CalibrationModeType.ONE_POINT
@@ -280,10 +291,11 @@ class EyedidFlutterPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Ini
                     left * density,
                     top * density,
                     right * density,
-                    bottom * density
+                    bottom * density,
+                    usePrevCalibration
                 )
             } else {
-                gazeTracker?.startCalibration(calibrationMode, calibrationAccuracyCriteria)
+                gazeTracker?.startCalibration(calibrationMode, calibrationAccuracyCriteria, usePrevCalibration)
                 result.success(null)
             }
         }
@@ -553,6 +565,7 @@ class EyedidFlutterPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Ini
 
     private fun initEventChannels(messenger: BinaryMessenger) {
         val trackingEventChannel = EventChannel(messenger, "eyedid.flutter.event.tracking")
+        val dropEventChannel = EventChannel(messenger, "eyedid.flutter.event.drop")
         val statusEventChannel = EventChannel(messenger, "eyedid.flutter.event.status")
         val calibrationEventChannel = EventChannel(messenger, "eyedid.flutter.event.calibration")
 
@@ -572,6 +585,21 @@ class EyedidFlutterPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Ini
             }
         })
 
+        dropEventChannel.setStreamHandler(object : EventChannel.StreamHandler {
+            override fun onListen(arguments: Any?, events: EventSink?) {
+                synchronized(dropEventConnected) {
+                    if (events != null) {
+                        dropEventSink = events
+                    }
+                }
+            }
+
+            override fun onCancel(arguemnts: Any?) {
+                synchronized(dropEventConnected) {
+                    dropEventSink = null
+                }
+            }
+        })
         statusEventChannel.setStreamHandler(object : EventChannel.StreamHandler {
             override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
                 synchronized(statusEventConnected) {
@@ -657,6 +685,13 @@ class EyedidFlutterPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Ini
         }
     }
 
+    override fun onDrop(timestamp: Long) {
+        val dropEvent = generateDropEvent(timestamp)
+        this.binding?.activity?.runOnUiThread {
+            dropEventSink?.success(dropEvent)
+        }
+    }
+
     private fun generateTrackingEvent(
         timestamp: Long,
         gazeInfo: GazeInfo,
@@ -702,6 +737,12 @@ class EyedidFlutterPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Ini
         return map
     }
 
+    private fun generateDropEvent(timestamp: Long): Map<String, Any> {
+        val map = HashMap<String, Any>()
+        map[DropEvent.Key.TIMESTAMP] = timestamp
+        return map
+    }
+
     override fun onCalibrationProgress(progress: Float) {
         synchronized(calibrationEventConnected) {
             val eventMap = HashMap<String, Any>()
@@ -736,6 +777,17 @@ class EyedidFlutterPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Ini
                 CalibrationEvent.Type.CALIBRATION_FINISHED
             eventMap[CalibrationEvent.Key.CALIBRATION_DATA] = calibrationData
 
+            binding?.activity?.runOnUiThread {
+                calibrationEventSink?.success(eventMap)
+            }
+        }
+    }
+
+    override fun onCalibrationCanceled(calibrationData: DoubleArray) {
+        synchronized(calibrationEventConnected) {
+            val eventMap = HashMap<String, Any>()
+            eventMap[CalibrationEvent.Key.CALIBRATION_TYPE] = CalibrationEvent.Type.CALIBRATION_CANCELED
+            eventMap[CalibrationEvent.Key.CALIBRATION_DATA] = calibrationData
             binding?.activity?.runOnUiThread {
                 calibrationEventSink?.success(eventMap)
             }

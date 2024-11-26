@@ -18,6 +18,7 @@ class MethodChannelEyedidFlutter extends EyedidFlutterPlatform {
   @visibleForTesting
   final trackingEventChannel =
       const EventChannel('eyedid.flutter.event.tracking');
+  final dropEventChannel = const EventChannel('eyedid.flutter.event.drop');
   final calibrationEventChannel =
       const EventChannel('eyedid.flutter.event.calibration');
   final statusEventChannel = const EventChannel('eyedid.flutter.event.status');
@@ -183,11 +184,14 @@ class MethodChannelEyedidFlutter extends EyedidFlutterPlatform {
   }
 
   @override
-  Future<void> startCalibration(CalibrationMode calibrationMode,
-      CalibrationCriteria calibrationCriteria, Rect? region) async {
+  Future<void> startCalibration(
+      CalibrationMode calibrationMode,
+      CalibrationCriteria calibrationCriteria,
+      Rect? region,
+      bool usePreviousCalibration) async {
     final methodName = EyedidMethodName.startCalibration.name;
     final argumentMap = _generateCalibrationOptionMap(
-        calibrationMode, calibrationCriteria, region);
+        calibrationMode, calibrationCriteria, region, usePreviousCalibration);
 
     await methodChannel.invokeMethod(methodName, argumentMap);
   }
@@ -195,7 +199,8 @@ class MethodChannelEyedidFlutter extends EyedidFlutterPlatform {
   Map<String, dynamic> _generateCalibrationOptionMap(
       CalibrationMode calibrationMode,
       CalibrationCriteria calibrationCriteria,
-      Rect? region) {
+      Rect? region,
+      bool usePreviousCalibration) {
     Map<String, dynamic> argumentMap = {};
 
     int caliMode = calibrationMode == CalibrationMode.one ? 1 : 5;
@@ -217,6 +222,9 @@ class MethodChannelEyedidFlutter extends EyedidFlutterPlatform {
       argumentMap[EyedidArgumentKey.calibrationRegionBottom.name] =
           region.bottom;
     }
+    
+    argumentMap[EyedidArgumentKey.usePreviousCalibration.name] =
+        usePreviousCalibration;
     return argumentMap;
   }
 
@@ -309,6 +317,11 @@ class MethodChannelEyedidFlutter extends EyedidFlutterPlatform {
   Stream<dynamic> getTrackingEventStream() {
     return trackingEventChannel
         .receiveBroadcastStream(trackingEventChannel.name);
+  }
+
+  @override
+  Stream<dynamic> getDropEventStream() {
+    return dropEventChannel.receiveBroadcastStream(dropEventChannel.name);
   }
 
   @override

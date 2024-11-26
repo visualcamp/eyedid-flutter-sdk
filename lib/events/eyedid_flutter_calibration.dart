@@ -38,6 +38,12 @@ class CalibrationInfo {
       progress = null;
       next = null;
       data = List<double>.from(event["calibrationData"] as List);
+    } else if (typeValue == "onCalibrationCanceled") {
+      // When the calibration is canceled, set the type to canceled and store the calibration data.
+      type = CalibrationType.canceled;
+      progress = null;
+      next = null;
+      data = List<double>.from(event["calibrationData"] as List);
     } else {
       // If the event type is unknown, set type to unknown and all other fields to null.
       type = CalibrationType.unknown;
@@ -57,6 +63,8 @@ class CalibrationInfo {
       context += " next : ${next.toString()}]";
     } else if (type == CalibrationType.finished) {
       context += " data : ${data.toString()}]";
+    } else if (type == CalibrationType.canceled) {
+      context += " data : ${data.toString()}]";
     }
 
     return context;
@@ -68,5 +76,6 @@ enum CalibrationType {
   progress, // Calibration is in progress.
   nextPoint, // Next calibration point is available.
   finished, // Calibration has finished and data is available.
+  canceled, // Calibration has been canceled.
   unknown // Unknown calibration type.
 }

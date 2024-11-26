@@ -72,6 +72,6 @@ android {
 
 dependencies {
     implementation 'androidx.core:core-ktx:1.13.1'
-    implementation("camp.visual.eyedid.android.gazetracker:eyedid-gazetracker:1.0.0-beta2")
+    implementation("camp.visual.eyedid.android.gazetracker:eyedid-gazetracker:1.0.0-beta3")
     implementation('androidx.annotation:annotation-jvm:1.9.0')
 }

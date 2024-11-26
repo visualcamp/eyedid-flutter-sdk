@@ -8,6 +8,7 @@ public class EyedidFlutterPlugin: NSObject, FlutterPlugin {
   private var trackingEventSink: FlutterEventSink? = nil
   private var statusEventSink: FlutterEventSink? = nil
   private var calibrationEventSink: FlutterEventSink? = nil
+  private var dropEventSink: FlutterEventSink? = nil
   private var tracker: GazeTracker? = nil
   private var attempting: Bool = false
   private var initResult: FlutterResult? = nil
@@ -15,23 +16,25 @@ public class EyedidFlutterPlugin: NSObject, FlutterPlugin {
   public var trackingEventChannel: FlutterEventChannel? = nil
   public var statusEventChannel: FlutterEventChannel? = nil
   public var calibrationEventChannel: FlutterEventChannel? = nil
-
+  public var dropEventChannel: FlutterEventChannel? = nil
   public let trackingChName = "eyedid.flutter.event.tracking"
   public let calibrationChName = "eyedid.flutter.event.calibration"
   public let statusChName = "eyedid.flutter.event.status"
-
+  public let dropChName = "eyedid.flutter.event.drop"
   public static func register(with registrar: FlutterPluginRegistrar) {
     let channel = FlutterMethodChannel(name: "eyedid.flutter.common.method", binaryMessenger: registrar.messenger())
     let instance = EyedidFlutterPlugin()
     registrar.addMethodCallDelegate(instance, channel: channel)
 
     instance.trackingEventChannel = FlutterEventChannel(name: "eyedid.flutter.event.tracking", binaryMessenger: registrar.messenger())
+    instance.dropEventChannel = FlutterEventChannel(name: "eyedid.flutter.event.drop", binaryMessenger: registrar.messenger())
     instance.statusEventChannel = FlutterEventChannel(name: "eyedid.flutter.event.status", binaryMessenger: registrar.messenger())
     instance.calibrationEventChannel = FlutterEventChannel(name: "eyedid.flutter.event.calibration", binaryMessenger: registrar.messenger())
 
     instance.trackingEventChannel?.setStreamHandler(instance)
     instance.statusEventChannel?.setStreamHandler(instance)
     instance.calibrationEventChannel?.setStreamHandler(instance)
+    instance.dropEventChannel?.setStreamHandler(instance)
   }
 
   public func detachFromEngine(for registrar: FlutterPluginRegistrar) {
@@ -220,15 +223,20 @@ public class EyedidFlutterPlugin: NSObject, FlutterPlugin {
           criteria = .high
         }
 
+        var usePrevCalibration: Bool = false
+        if let usePreviousCalibration = arguments[ArgumentKey.usePreviousCalibration] as? Bool {
+          usePrevCalibration = usePreviousCalibration
+        }
+           
         if let left = arguments[ArgumentKey.calibrationRegionLeft] as? Double,
            let top = arguments[ArgumentKey.calibrationRegionTop] as? Double,
            let right = arguments[ArgumentKey.calibrationRegionRight] as? Double,
            let bottom = arguments[ArgumentKey.calibrationRegionBottom] as? Double {
 
           let rect = CGRect(x: left, y: top, width: right - left, height: bottom - top)
-          gazeTracker.startCalibration(mode: mode, criteria: criteria, region: rect)
+          gazeTracker.startCalibration(mode: mode, criteria: criteria, region: rect, usePreviousCalibration: usePrevCalibration)
         } else {
-          gazeTracker.startCalibration(mode: mode, criteria: criteria, region: UIScreen.main.bounds)
+          gazeTracker.startCalibration(mode: mode, criteria: criteria, region: UIScreen.main.bounds, usePreviousCalibration: usePrevCalibration)
         }
         result(nil)
       } else {
@@ -416,6 +424,38 @@ extension EyedidFlutterPlugin: InitializationDelegate, TrackingDelegate, StatusD
     initResult = nil
   }
 
+  private func generateTrackingStateString(_ state: TrackingState) -> String {
+    switch state {
+      case .success:
+        return "SUCCESS"
+      case .gazeNotFound:
+        return "GAZE_NOT_FOUND"
+      case .faceMissing:
+        return "FACE_MISSING"
+    }
+  }
+
+  private func generateEyeMovementStateString(_ state: EyeMovementState) -> String {
+    switch state {
+      case .fixation:
+        return "FIXATION"
+      case .saccade:
+        return "SACCADE"
+      case .unknown:
+        return "UNKNOWN"
+    }
+  }
+
+  private func generateScreenStateString(_ state: ScreenState) -> String {
+    switch state {
+      case .insideOfScreen:
+        return "INSIDE_OF_SCREEN"
+      case .outsideOfScreen:
+        return "OUTSIDE_OF_SCREEN"
+      case .unknown:
+        return "UNKNOWN"
+    }
+  }
   public func onMetrics(timestamp: Int, gazeInfo: GazeInfo, faceInfo: FaceInfo, blinkInfo: BlinkInfo, userStatusInfo: UserStatusInfo) {
     if let sink = self.trackingEventSink {
       var eventData = [String: Any]()
@@ -426,9 +466,9 @@ extension EyedidFlutterPlugin: InitializationDelegate, TrackingDelegate, StatusD
       eventData[TrackingEventKey.gazeY] = gazeInfo.y
       eventData[TrackingEventKey.fixationX] = gazeInfo.fixationX
       eventData[TrackingEventKey.fixationY] = gazeInfo.fixationY
-      eventData[TrackingEventKey.trackingState] = gazeInfo.trackingState.description
-      eventData[TrackingEventKey.eyeMovementState] = gazeInfo.eyeMovementState.description
-      eventData[TrackingEventKey.screenState] = gazeInfo.screenState.description
+      eventData[TrackingEventKey.trackingState] = generateTrackingStateString(gazeInfo.trackingState)
+      eventData[TrackingEventKey.eyeMovementState] = generateEyeMovementStateString(gazeInfo.eyeMovementState)
+      eventData[TrackingEventKey.screenState] = generateScreenStateString(gazeInfo.screenState)
 
       eventData[TrackingEventKey.faceScore] = faceInfo.score
       eventData[TrackingEventKey.faceLeft] = Double(faceInfo.rect.minX)
@@ -459,6 +499,16 @@ extension EyedidFlutterPlugin: InitializationDelegate, TrackingDelegate, StatusD
       }
     }
 
+  }
+
+  public func onDrop(timestamp: Int) {
+    if let sink = self.dropEventSink {
+      var eventData = [String: Any]()
+      eventData[DropEventKey.timestamp] = timestamp
+      DispatchQueue.main.async {
+        sink(eventData)
+      }
+    }
   }
 
   public func onStarted() {
@@ -516,6 +566,17 @@ extension EyedidFlutterPlugin: InitializationDelegate, TrackingDelegate, StatusD
     }
   }
 
+  public func onCalibrationCanceled(calibrationData: [Double]) {
+    if let sink = self.calibrationEventSink {
+      var eventData = [String: Any]()
+      eventData[CalibrationEventKey.calibrationType] = CalibrationEventType.calibrationCanceled
+      eventData[CalibrationEventKey.calibrationData] = calibrationData
+      DispatchQueue.main.async {
+        sink(eventData)
+      }
+    }
+  }
+
   public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
     if let channelName = arguments as? String {
       if channelName == trackingChName {
@@ -524,6 +585,8 @@ extension EyedidFlutterPlugin: InitializationDelegate, TrackingDelegate, StatusD
         calibrationEventSink = events
       } else if channelName == statusChName {
         statusEventSink = events
+      } else if channelName == dropChName {
+        dropEventSink = events
       }
     }
     return nil
@@ -537,6 +600,8 @@ extension EyedidFlutterPlugin: InitializationDelegate, TrackingDelegate, StatusD
         calibrationEventSink = nil
       } else if channelName == statusChName {
         statusEventSink = nil
+      } else if channelName == dropChName {
+        dropEventSink = nil
       }
     }
     return nil

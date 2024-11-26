@@ -21,6 +21,7 @@ object ArgumentKey {
     const val CALIBRATION_REGION_TOP = "calibrationRegionTop"
     const val CALIBRATION_REGION_RIGHT = "calibrationRegionRight"
     const val CALIBRATION_REGION_BOTTOM = "calibrationRegionBottom"
+    const val USE_PREVIOUS_CALIBRATION = "usePreviousCalibration"
     const val CALIBRATION_DATA = "calibrationData"
     const val ATTENTION_REGION_LEFT = "attentionRegionLeft"
     const val ATTENTION_REGION_TOP = "attentionRegionTop"
