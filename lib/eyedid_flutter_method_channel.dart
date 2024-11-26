@@ -222,6 +222,7 @@ class MethodChannelEyedidFlutter extends EyedidFlutterPlatform {
       argumentMap[EyedidArgumentKey.calibrationRegionBottom.name] =
           region.bottom;
     }
+    
     argumentMap[EyedidArgumentKey.usePreviousCalibration.name] =
         usePreviousCalibration;
     return argumentMap;

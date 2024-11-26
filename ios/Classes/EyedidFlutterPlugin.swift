@@ -227,7 +227,7 @@ public class EyedidFlutterPlugin: NSObject, FlutterPlugin {
         if let usePreviousCalibration = arguments[ArgumentKey.usePreviousCalibration] as? Bool {
           usePrevCalibration = usePreviousCalibration
         }
-
+           
         if let left = arguments[ArgumentKey.calibrationRegionLeft] as? Double,
            let top = arguments[ArgumentKey.calibrationRegionTop] as? Double,
            let right = arguments[ArgumentKey.calibrationRegionRight] as? Double,
@@ -456,7 +456,6 @@ extension EyedidFlutterPlugin: InitializationDelegate, TrackingDelegate, StatusD
         return "UNKNOWN"
     }
   }
-
   public func onMetrics(timestamp: Int, gazeInfo: GazeInfo, faceInfo: FaceInfo, blinkInfo: BlinkInfo, userStatusInfo: UserStatusInfo) {
     if let sink = self.trackingEventSink {
       var eventData = [String: Any]()

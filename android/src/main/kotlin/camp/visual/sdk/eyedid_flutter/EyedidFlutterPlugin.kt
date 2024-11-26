@@ -53,6 +53,7 @@ class EyedidFlutterPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Ini
 
     private val trackingEventConnected = Any()
     private val dropEventConnected = Any()
+
     private val statusEventConnected = Any()
     private val calibrationEventConnected = Any()
     private val methodConnected = Any()
@@ -599,7 +600,6 @@ class EyedidFlutterPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Ini
                 }
             }
         })
-
         statusEventChannel.setStreamHandler(object : EventChannel.StreamHandler {
             override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
                 synchronized(statusEventConnected) {

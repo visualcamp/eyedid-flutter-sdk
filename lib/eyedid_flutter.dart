@@ -186,6 +186,7 @@ class EyedidFlutter {
   /// - [calibrationCriteria]: The criteria for calibration (default is [CalibrationCriteria.standard]).
   /// - [region]: The screen region where targets will appear (default is the full screen).
   /// - [usePreviousCalibration]: Whether to use the previous calibration data (default is false).
+
   ///
   /// Note: A [PlatformException] may be thrown if the gaze tracker is not initialized.
   Future<void> startCalibration(CalibrationMode calibrationMode,
