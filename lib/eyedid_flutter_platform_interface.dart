@@ -30,7 +30,7 @@ abstract class EyedidFlutterPlatform extends PlatformInterface {
     _instance = instance;
   }
 
-  Future<InitializedResult?> init(
+  Future<InitializedResult> init(
       String licenseKey, GazeTrackerOptions options) {
     throw UnimplementedError('init() has not been implemented.');
   }
@@ -39,7 +39,7 @@ abstract class EyedidFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('release() has not been implemented.');
   }
 
-  Future<String?> getPlatformVersion() {
+  Future<String> getPlatformVersion() {
     throw UnimplementedError('platformVersion() has not been implemented.');
   }
 
@@ -51,11 +51,11 @@ abstract class EyedidFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('stopTracking() has not been implemented.');
   }
 
-  Future<bool?> isTracking() {
+  Future<bool> isTracking() {
     throw UnimplementedError('isTracking() has not been implemented.');
   }
 
-  Future<bool?> hasCameraPositions() {
+  Future<bool> hasCameraPositions() {
     throw UnimplementedError('hasCameraPositions() has not been implemented.');
   }
 
@@ -67,7 +67,7 @@ abstract class EyedidFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('getCameraPosition() has not been implemented.');
   }
 
-  Future<List<CameraPosition>?> getCameraPositionList() {
+  Future<List<CameraPosition>> getCameraPositionList() {
     throw UnimplementedError(
         'getCameraPositionList() has not been implemented.');
   }
@@ -77,7 +77,7 @@ abstract class EyedidFlutterPlatform extends PlatformInterface {
         'selectCameraPosition() has not been implemented.');
   }
 
-  Future<bool?> setTrackingFPS(int fps) {
+  Future<bool> setTrackingFPS(int fps) {
     throw UnimplementedError('setTrackingFPS() has not been implemented.');
   }
 
@@ -93,7 +93,7 @@ abstract class EyedidFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('stopCalibration() has not been implemented.');
   }
 
-  Future<bool?> isCalibrating() {
+  Future<bool> isCalibrating() {
     throw UnimplementedError('isCalibrating() has not been implemented.');
   }
 
@@ -137,12 +137,12 @@ abstract class EyedidFlutterPlatform extends PlatformInterface {
         'getCalibrationEventStream() has not been implemented.');
   }
 
-  Future<bool?> setForcedOrientation(EyedidDeviceOrientation orientation) {
+  Future<bool> setForcedOrientation(EyedidDeviceOrientation orientation) {
     throw UnimplementedError(
         'setForcedOrientation() has not been implemented.');
   }
 
-  Future<bool?> resetForcedOrientation() {
+  Future<bool> resetForcedOrientation() {
     throw UnimplementedError(
         'resetForcedOrientation() has not been implemented.');
   }

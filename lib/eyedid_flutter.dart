@@ -45,7 +45,7 @@ class EyedidFlutter {
   /// Returns a [FutureOr] containing an [InitializedResult], which provides information
   /// on whether the initialization was successful or not. If the result is null,
   /// the initialization failed or was interrupted.
-  FutureOr<InitializedResult?> initGazeTracker(
+  FutureOr<InitializedResult> initGazeTracker(
       {required String licenseKey, GazeTrackerOptions? options}) {
     GazeTrackerOptions options0 =
         options ?? GazeTrackerOptionsBuilder().build();
@@ -67,9 +67,8 @@ class EyedidFlutter {
   /// specific platform (iOS/Android). The version string provides insight into
   /// the currently installed release of the Eyedid SDK.
   ///
-  /// Returns a [Future] that resolves with the version string, or `null` if
-  /// the version cannot be retrieved.
-  Future<String?> getPlatformVersion() {
+  /// Returns a [Future] that resolves with the version string.
+  Future<String> getPlatformVersion() {
     return EyedidFlutterPlatform.instance.getPlatformVersion();
   }
 
@@ -102,7 +101,7 @@ class EyedidFlutter {
   /// Returns:
   /// - `true` if tracking is active.
   /// - `false` if tracking is inactive or not properly initialized.
-  Future<bool?> isTracking() async {
+  Future<bool> isTracking() async {
     return EyedidFlutterPlatform.instance.isTracking();
   }
 
@@ -115,7 +114,7 @@ class EyedidFlutter {
   /// - `false` if it is not available.
   ///
   /// Note: This function is Android-specific.
-  Future<bool?> hasCameraPositions() async {
+  Future<bool> hasCameraPositions() async {
     return EyedidFlutterPlatform.instance.hasCameraPositions();
   }
 
@@ -146,7 +145,7 @@ class EyedidFlutter {
   /// Returns a list of [CameraPosition] objects, or null if unavailable.
   ///
   /// Note: This function is Android-specific.
-  Future<List<CameraPosition>?> getCameraPositionList() async {
+  Future<List<CameraPosition>> getCameraPositionList() async {
     return EyedidFlutterPlatform.instance.getCameraPositionList();
   }
 
@@ -175,7 +174,7 @@ class EyedidFlutter {
   /// - `false` if the FPS is out of range (below 1) or if an error occurs.
   ///
   /// Note: A [PlatformException] may be thrown if the gaze tracker is not properly initialized.
-  Future<bool?> setTrackingFPS(int fps) async {
+  Future<bool> setTrackingFPS(int fps) async {
     return EyedidFlutterPlatform.instance.setTrackingFPS(fps);
   }
 
@@ -186,7 +185,6 @@ class EyedidFlutter {
   /// - [calibrationCriteria]: The criteria for calibration (default is [CalibrationCriteria.standard]).
   /// - [region]: The screen region where targets will appear (default is the full screen).
   /// - [usePreviousCalibration]: Whether to use the previous calibration data (default is false).
-
   ///
   /// Note: A [PlatformException] may be thrown if the gaze tracker is not initialized.
   Future<void> startCalibration(CalibrationMode calibrationMode,
@@ -213,7 +211,7 @@ class EyedidFlutter {
   /// - `false` if calibration is not active or if an error occurs.
   ///
   /// Note: A [PlatformException] may be thrown if the gaze tracker is not initialized.
-  Future<bool?> isCalibrating() async {
+  Future<bool> isCalibrating() async {
     return EyedidFlutterPlatform.instance.isCalibrating();
   }
 
@@ -234,7 +232,6 @@ class EyedidFlutter {
   ///
   /// Parameters:
   /// - [data]: A list of doubles containing the calibration data.
-  ///
   ///
   /// Note: Ensure the gaze tracker is initialized a [PlatformException] may be thrown.
   Future<void> setCalibrationData(List<double> data) async {
@@ -279,8 +276,7 @@ class EyedidFlutter {
   ///
   /// Note: Ensure the gaze tracker is initialized.
   /// This function is iOS-specific.
-  Future<bool?> setForcedOrientation(
-      EyedidDeviceOrientation orientation) async {
+  Future<bool> setForcedOrientation(EyedidDeviceOrientation orientation) async {
     return EyedidFlutterPlatform.instance.setForcedOrientation(orientation);
   }
 
@@ -295,7 +291,7 @@ class EyedidFlutter {
   ///
   /// Note: Ensure the gaze tracker is initialized.
   /// This function is iOS-specific.
-  Future<bool?> resetForcedOrientation() async {
+  Future<bool> resetForcedOrientation() async {
     return EyedidFlutterPlatform.instance.resetForcedOrientation();
   }
 
