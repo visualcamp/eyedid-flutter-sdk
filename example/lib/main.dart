@@ -71,8 +71,7 @@ class _MyAppState extends State<MyApp> {
     if (_hasCameraPermission) {
       String platformVersion;
       try {
-        platformVersion = await _eyedidFlutterPlugin.getPlatformVersion() ??
-            'Unknown platform version';
+        platformVersion = await _eyedidFlutterPlugin.getPlatformVersion();
       } on PlatformException catch (error) {
         print(error);
         platformVersion = 'Failed to get platform version.';
@@ -97,29 +96,27 @@ class _MyAppState extends State<MyApp> {
           .build();
       final result = await _eyedidFlutterPlugin.initGazeTracker(
           licenseKey: _licenseKey, options: options);
-      if (result != null) {
-        var enable = false;
-        var showGaze = false;
-        if (result.result) {
-          enable = true;
-          listenEvents();
-          _eyedidFlutterPlugin.startTracking();
-        } else if (result.message == InitializedResult.isAlreadyAttempting ||
-            result.message == InitializedResult.gazeTrackerAlreadyInitialized) {
-          enable = true;
-          listenEvents();
-          final isTracking = await _eyedidFlutterPlugin.isTracking() ?? false;
-          if (isTracking) {
-            showGaze = true;
-          }
+      var enable = false;
+      var showGaze = false;
+      if (result.result) {
+        enable = true;
+        listenEvents();
+        _eyedidFlutterPlugin.startTracking();
+      } else if (result.message == InitializedResult.isAlreadyAttempting ||
+          result.message == InitializedResult.gazeTrackerAlreadyInitialized) {
+        enable = true;
+        listenEvents();
+        final isTracking = await _eyedidFlutterPlugin.isTracking();
+        if (isTracking) {
+          showGaze = true;
         }
-
-        setState(() {
-          _isInitialied = enable;
-          _stateString = "${result.result} : (${result.message})";
-          _showingGaze = showGaze;
-        });
       }
+
+      setState(() {
+        _isInitialied = enable;
+        _stateString = "${result.result} : (${result.message})";
+        _showingGaze = showGaze;
+      });
     } on PlatformException catch (e) {
       requestInitGazeTracker = "Occur PlatformException (${e.message})";
       setState(() {

@@ -24,7 +24,7 @@ class MethodChannelEyedidFlutter extends EyedidFlutterPlatform {
   final statusEventChannel = const EventChannel('eyedid.flutter.event.status');
 
   @override
-  Future<InitializedResult?> init(
+  Future<InitializedResult> init(
       String licenseKey, GazeTrackerOptions options) async {
     final methodName = EyedidMethodName.initGazeTracker.name;
     final Map<String, dynamic> argumentMap = {
@@ -46,11 +46,11 @@ class MethodChannelEyedidFlutter extends EyedidFlutterPlatform {
   }
 
   @override
-  Future<String?> getPlatformVersion() async {
+  Future<String> getPlatformVersion() async {
     final methodName = EyedidMethodName.getVersionName.name;
-    final version =
+    final versionMap =
         await methodChannel.invokeMethod<Map<dynamic, dynamic>>(methodName);
-    return version?[EyedidArgumentKey.eyedidVersion.name] as String;
+    return versionMap?[EyedidArgumentKey.eyedidVersion.name] ?? "";
   }
 
   @override
@@ -66,18 +66,18 @@ class MethodChannelEyedidFlutter extends EyedidFlutterPlatform {
   }
 
   @override
-  Future<bool?> isTracking() async {
+  Future<bool> isTracking() async {
     final methodName = EyedidMethodName.isTracking.name;
     final isTracking = await methodChannel.invokeMethod<bool>(methodName);
-    return isTracking;
+    return isTracking ?? false;
   }
 
   @override
-  Future<bool?> hasCameraPositions() async {
+  Future<bool> hasCameraPositions() async {
     final methodName = EyedidMethodName.hasCameraPositions.name;
     final hasCameraPosition =
         await methodChannel.invokeMethod<bool>(methodName);
-    return hasCameraPosition;
+    return hasCameraPosition ?? false;
   }
 
   @override
@@ -132,7 +132,7 @@ class MethodChannelEyedidFlutter extends EyedidFlutterPlatform {
   }
 
   @override
-  Future<List<CameraPosition>?> getCameraPositionList() async {
+  Future<List<CameraPosition>> getCameraPositionList() async {
     final methodName = EyedidMethodName.getCameraPositionList.name;
     try {
       List<Map<dynamic, dynamic>>? camerapositionMapList =
@@ -147,7 +147,7 @@ class MethodChannelEyedidFlutter extends EyedidFlutterPlatform {
       }
     }
 
-    return null;
+    return [];
   }
 
   List<CameraPosition> _generateCameraPositionListWithList(
@@ -172,7 +172,7 @@ class MethodChannelEyedidFlutter extends EyedidFlutterPlatform {
   }
 
   @override
-  Future<bool?> setTrackingFPS(int fps) async {
+  Future<bool> setTrackingFPS(int fps) async {
     final methodName = EyedidMethodName.setTrackingFPS.name;
     final Map<String, int> argumentMap = {
       EyedidArgumentKey.trackingFPS.name: fps
@@ -180,7 +180,7 @@ class MethodChannelEyedidFlutter extends EyedidFlutterPlatform {
 
     final isResult =
         await methodChannel.invokeMethod<bool>(methodName, argumentMap);
-    return isResult;
+    return isResult ?? false;
   }
 
   @override
@@ -222,7 +222,7 @@ class MethodChannelEyedidFlutter extends EyedidFlutterPlatform {
       argumentMap[EyedidArgumentKey.calibrationRegionBottom.name] =
           region.bottom;
     }
-    
+
     argumentMap[EyedidArgumentKey.usePreviousCalibration.name] =
         usePreviousCalibration;
     return argumentMap;
@@ -235,10 +235,10 @@ class MethodChannelEyedidFlutter extends EyedidFlutterPlatform {
   }
 
   @override
-  Future<bool?> isCalibrating() async {
+  Future<bool> isCalibrating() async {
     final methodName = EyedidMethodName.isCalibrating.name;
     final isCalibrating = await methodChannel.invokeMethod<bool>(methodName);
-    return isCalibrating;
+    return isCalibrating ?? false;
   }
 
   @override
@@ -298,19 +298,21 @@ class MethodChannelEyedidFlutter extends EyedidFlutterPlatform {
   }
 
   @override
-  Future<bool?> setForcedOrientation(
-      EyedidDeviceOrientation orientation) async {
+  Future<bool> setForcedOrientation(EyedidDeviceOrientation orientation) async {
     final methodName = EyedidMethodName.setForcedOrientation.name;
     Map<String, dynamic> argumentMap = {
       EyedidArgumentKey.orientation.name: orientation.name
     };
-    return await methodChannel.invokeMethod<bool>(methodName, argumentMap);
+    final isResult =
+        await methodChannel.invokeMethod<bool>(methodName, argumentMap);
+    return isResult ?? false;
   }
 
   @override
-  Future<bool?> resetForcedOrientation() async {
-    return await methodChannel
+  Future<bool> resetForcedOrientation() async {
+    final isResult = await methodChannel
         .invokeMethod<bool>(EyedidMethodName.resetForcedOrientation.name);
+    return isResult ?? false;
   }
 
   @override

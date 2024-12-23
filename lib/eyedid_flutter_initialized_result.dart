@@ -20,20 +20,31 @@ class InitializedResult {
   static const String isAlreadyAttempting = "Already attempting";
   static const String gazeTrackerAlreadyInitialized =
       "Gaze tracker is already initialized.";
+  static const String missingKeys =
+      "Initialization failed due to missing keys.";
 
   /// Creates an [InitializedResult] by parsing a result map.
   ///
   /// The [resultMap] must contain the keys for initializing [result] and [message].
   /// If required keys are missing, an assertion error is thrown.
   InitializedResult(Map<dynamic, dynamic> resultMap) {
-    _checkKeyExists(resultMap, _initializedResultKey);
-    _checkKeyExists(resultMap, _initializedResultMessageKey);
+    try {
+      _checkKeyExists(resultMap, _initializedResultKey);
+      _checkKeyExists(resultMap, _initializedResultMessageKey);
+    } on FormatException catch (e) {
+      print("Initialization failed: ${e.message}");
+      // Set default values in case of failure
+      result = false;
+      message = missingKeys;
+    }
 
-    result = resultMap[_initializedResultKey];
-    message = resultMap[_initializedResultMessageKey];
+    result = resultMap[_initializedResultKey] ?? false;
+    message = resultMap[_initializedResultMessageKey] ?? missingKeys;
   }
 
   void _checkKeyExists(Map<dynamic, dynamic> event, String key) {
-    assert(event.containsKey(key), "Missing $key");
+    if (!event.containsKey(key)) {
+      throw FormatException("Missing $key in resultMap");
+    }
   }
 }
