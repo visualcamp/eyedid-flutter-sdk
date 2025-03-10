@@ -4,7 +4,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'eyedid_flutter'
-  s.version          = '0.0.2'
+  s.version          = '0.0.3'
   s.summary          = 'Eyedid Flutter plugin project.'
   s.description      = <<-DESC
 Eyedid SDK
@@ -16,7 +16,7 @@ Eyedid SDK
   s.source_files = 'Classes/**/*'
   s.documentation_url = 'https://docs.eyedid.ai'
   s.dependency 'Flutter'
-  s.dependency 'Eyedid', '~> 1.0.0-beta2'
+  s.dependency 'Eyedid', '~> 1.0.0-beta3'
   s.platform = :ios, '13.0'
 
   # Flutter.framework does not contain a i386 slice.
