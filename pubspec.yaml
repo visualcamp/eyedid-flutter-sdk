@@ -1,6 +1,6 @@
 name: eyedid_flutter
 description: "Eyedid Flutter SDK"
-version: 1.0.0-beta4
+version: 1.0.0-beta5
 homepage: https://sdk.eyedid.ai
 
 environment:
@@ -10,13 +10,13 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  permission_handler: ^11.3.1
-  plugin_platform_interface: ^2.0.2
+  permission_handler: ^11.4.0
+  plugin_platform_interface: ^2.1.8
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^4.0.0
+  flutter_lints: ^5.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
