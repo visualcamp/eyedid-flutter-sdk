@@ -1,3 +1,7 @@
+### 1.0.0-beta6
+
+- Update: Eyedid iOS SDK updated to 1.0.0-beta4.
+
 ### 1.0.0-beta5
 
 - Update: Eyedid iOS SDK updated to 1.0.0-beta3.
