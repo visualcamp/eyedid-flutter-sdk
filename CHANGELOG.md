@@ -1,3 +1,7 @@
+### 1.0.0-beta7
+
+- Update: Eyedid Android SDK updated to 1.0.0-beta5.
+
 ### 1.0.0-beta6
 
 - Update: Eyedid iOS SDK updated to 1.0.0-beta4.
